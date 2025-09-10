@@ -17,59 +17,90 @@
                 <div class="title-price mx-16">Price</div>
             </div>
         </div>
-        <div class="product-item flex mb-6">
-            <div class="product-container flex w-full">
-                <div class="product-img max-w-[120px]">
-                    <img src="https://placehold.co/300x300">
-                </div>
-                <div class="product-info h-full content-center ml-2">
-                    <div class="product-name text-2xl">
-                        Product name
+
+        @foreach ($products as $product)
+            <div class="product-item flex mb-6">
+                <div class="product-container flex w-full">
+                    <div class="product-img max-w-[120px]">
+                        <img src="{{ $product->image_url }}">
                     </div>
-                    <div class="product-description">
-                        Product description
+                    <div class="product-info h-full content-center ml-2">
+                        <div class="product-name text-2xl">
+                            {{ $product->name }}
+                        </div>
+                        <div class="product-description">
+                            {{ $product->description }}
+                        </div>
                     </div>
-                </div>
-                <div class="product-item-right-side ml-auto flex text-2xl">
-                    <div class="product-category content-center">
-                        Category
-                    </div>
-                    <div class="product-price ml-16 content-center">
-                        $15.99
-                    </div>
-                    <div class="product-buttons content-center ml-4 relative">
-                        <img id="three-dots" class="scale-125 cursor-pointer" src="{{ asset('svg/3dots.svg') }}"
-                             alt="3 Dots" onclick="toggleDropdown()">
-                        <div id="dropdown-menu" class="product-button-dropdown absolute right-0 mt-2 bg-white border shadow-lg
-                        w-40 p-6 hidden z-10 justify-items-center">
-                            <div class="product-share-button flex cursor-pointer mb-2">
-                                <img class="w-6" src="{{ asset('svg/share-arrows.svg') }}" alt="Share icon">
-                                <div>Share</div>
-                            </div>
-                            <div class="product-delete-button flex cursor-pointer">
-                                <img class="w-6" src="{{ asset('svg/red-trash-can-icon.svg') }}" alt="Delete icon">
-                                <div>Delete</div>
+                    <div class="product-item-right-side ml-auto flex text-2xl">
+                        <div class="product-category content-center">
+                            {{ $product->category }}
+                        </div>
+                        <div class="product-price ml-16 content-center">
+                            {{ $product->currency }} {{ $product->price }}
+                        </div>
+                        <div class="product-buttons content-center ml-4 relative">
+                            <img class="three-dots scale-125 cursor-pointer" src="{{ asset('svg/3dots.svg') }}"
+                                 alt="3 Dots" data-dropdown-id="dropdown-menu-{{ $product->id }}">
+                            <div id="dropdown-menu-{{ $product->id }}" class="product-button-dropdown absolute right-0 mt-2 bg-white border shadow-lg
+                            w-40 p-6 hidden z-10 justify-items-center">
+                                <div class="product-share-button flex cursor-pointer mb-2">
+                                    <img class="w-6" src="{{ asset('svg/share-arrows.svg') }}" alt="Share icon">
+                                    <div>Share</div>
+                                </div>
+                                <div class="product-delete-button flex cursor-pointer"  onclick="deleteProduct({{ $product->id }})">
+                                    <img class="w-6" src="{{ asset('svg/red-trash-can-icon.svg') }}" alt="Delete icon">
+                                    <div>Delete</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endforeach
+
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const threeDots = document.getElementById('three-dots');
-        const dropdownMenu = document.getElementById('dropdown-menu');
+    function deleteProduct(productId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/product/${productId}`;
+        form.innerHTML = `
+            @csrf
+        @method('DELETE')
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
 
-        threeDots.addEventListener('click', function() {
-            dropdownMenu.classList.toggle('hidden');
+    document.addEventListener("DOMContentLoaded", function() {
+        const threeDotsButtons = document.querySelectorAll('.three-dots');
+
+        threeDotsButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const dropdownId = button.getAttribute('data-dropdown-id');
+                const dropdownMenu = document.getElementById(dropdownId);
+
+                const openDropdowns = document.querySelectorAll('.product-button-dropdown:not(.hidden)');
+                openDropdowns.forEach(dropdown => {
+                    dropdown.classList.add('hidden');
+                });
+
+                dropdownMenu.classList.toggle('hidden');
+            });
         });
 
         document.addEventListener('click', function(event) {
-            if (!dropdownMenu.contains(event.target) && event.target !== threeDots) {
-                dropdownMenu.classList.add('hidden');
+            const clickedInsideDropdown = event.target.closest('.product-button-dropdown');
+            const clickedInsideThreeDots = event.target.closest('.three-dots');
+
+            if (!clickedInsideDropdown && !clickedInsideThreeDots) {
+                const openDropdowns = document.querySelectorAll('.product-button-dropdown:not(.hidden)');
+                openDropdowns.forEach(dropdown => {
+                    dropdown.classList.add('hidden');
+                });
             }
         });
     });
