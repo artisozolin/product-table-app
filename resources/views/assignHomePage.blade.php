@@ -22,7 +22,7 @@
             <div class="product-item flex mb-6">
                 <div class="product-container flex w-full">
                     <div class="product-img max-w-[120px]">
-                        <img src="{{ $product->image_url }}">
+                        <img src="{{ $product->image_url }}" alt="Product Image">
                     </div>
                     <div class="product-info h-full content-center ml-2">
                         <div class="product-name text-2xl">
@@ -42,13 +42,16 @@
                         <div class="product-buttons content-center ml-4 relative">
                             <img class="three-dots scale-125 cursor-pointer" src="{{ asset('svg/3dots.svg') }}"
                                  alt="3 Dots" data-dropdown-id="dropdown-menu-{{ $product->id }}">
-                            <div id="dropdown-menu-{{ $product->id }}" class="product-button-dropdown absolute right-0 mt-2 bg-white border shadow-lg
+                            <div id="dropdown-menu-{{ $product->id }}" class="product-button-dropdown absolute right-0
+                            mt-2 bg-white border shadow-lg
                             w-40 p-6 hidden z-10 justify-items-center">
-                                <div class="product-share-button flex cursor-pointer mb-2">
+                                <div class="product-share-button flex cursor-pointer mb-2"
+                                     onclick="openModal({{ json_encode($product) }})">
                                     <img class="w-6" src="{{ asset('svg/share-arrows.svg') }}" alt="Share icon">
                                     <div>Share</div>
                                 </div>
-                                <div class="product-delete-button flex cursor-pointer"  onclick="deleteProduct({{ $product->id }})">
+                                <div class="product-delete-button flex cursor-pointer"
+                                     onclick="deleteProduct({{ $product->id }})">
                                     <img class="w-6" src="{{ asset('svg/red-trash-can-icon.svg') }}" alt="Delete icon">
                                     <div>Delete</div>
                                 </div>
@@ -58,6 +61,32 @@
                 </div>
             </div>
         @endforeach
+
+        <div id="productModal" class="product-modal-container fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden
+        justify-center items-center flex">
+            <div class="product-modal-wrapper bg-white p-6 rounded-lg max-w-sm w-full">
+                <div class="product-modal-title text-2xl font-bold mb-4">Share Your Product!</div>
+                <div class="product-modal-image mb-4">
+                    <img id="productImage" src="" alt="Product Image">
+                </div>
+                <div class="product-modal-name mb-4">
+                    <div id="name" class="block text-sm font-medium">Product name</div>
+                </div>
+                <div class="product-modal-description mb-4">
+                    <div id="description" class="block text-sm font-medium">Product Description</div>
+                </div>
+                <div class="product-modal-buttons flex justify-between">
+                    <button type="button" onclick="closeModal()" class="product-modal-close bg-red-500 text-white px-4
+                    py-2 rounded-md">
+                        Close
+                    </button>
+                    <button type="button" onclick="copyToClipboard()" class="product-modal-share bg-blue-500 text-white
+                    px-4 py-2 rounded-md">
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -73,6 +102,31 @@
         `;
         document.body.appendChild(form);
         form.submit();
+    }
+
+    function openModal(product) {
+        document.getElementById('productModal').classList.remove('hidden');
+
+        window.productUrl = product.url;
+        document.getElementById('name').innerHTML = product.name;
+        document.getElementById('description').innerHTML = product.description;
+        document.getElementById('productImage').src = product.image_url;
+    }
+
+    function closeModal() {
+        document.getElementById('productModal').classList.add('hidden');
+    }
+
+    function copyToClipboard() {
+        const productShareUrlInput = document.createElement('input');
+        productShareUrlInput.value = window.productUrl;
+        document.body.appendChild(productShareUrlInput);
+
+        productShareUrlInput.select();
+        document.execCommand('copy');
+
+        document.body.removeChild(productShareUrlInput);
+        closeModal();
     }
 
     document.addEventListener("DOMContentLoaded", function() {
