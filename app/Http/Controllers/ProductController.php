@@ -16,6 +16,6 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        return redirect()->back();
+        return redirect()->route('home')->with('success', 'Product deleted successfully');
     }
 }
