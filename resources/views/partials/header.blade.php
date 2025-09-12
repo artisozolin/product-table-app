@@ -6,4 +6,4 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
     <title>Assignment app</title>
 </head>
-    <body class="assign-page min-h-screen bg-asig-lightGrey">
+    <body class="assign-page">
