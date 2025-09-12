@@ -55,7 +55,7 @@ class FetchProducts extends Command
                         'sku' => $productData['_id'],
                         'name' => $productData['name'],
                         'description' => $productData['description'],
-                        'category' => $productData['category'],
+                        'category' => html_entity_decode($productData['category']),
                         'price' => $productData['price'] / 100,
                         'currency' => $productData['currency'],
                         'url' => $productData['url'],

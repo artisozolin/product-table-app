@@ -19,4 +19,20 @@ class Product extends Model
         'url',
         'image_url'
     ];
+
+    /**
+     * @return string
+     */
+    public function getCurrencySymbolAttribute (): string
+    {
+        $currencyCodeToSymbol = [
+            'USD' => '$',
+            'EUR' => '€',
+            'GBP' => '£',
+            'AUD' => 'A$',
+            'CAD' => 'C$',
+        ];
+
+        return $currencyCodeToSymbol[$this->currency] ?? $this->currency;
+    }
 }
