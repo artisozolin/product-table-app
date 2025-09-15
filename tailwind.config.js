@@ -15,6 +15,7 @@ module.exports = {
             colors: {
                 asig: {
                     lightGrey: '#F6F6F6',
+                    grey: '#E1E1E1',
                     successGreen: '#93C572',
                     lightGreen: '#EAF6F0'
                 }
