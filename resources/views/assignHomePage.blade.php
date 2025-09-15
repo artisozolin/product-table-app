@@ -100,6 +100,35 @@
         </div>
 
     </div>
+    @if ($products->hasPages())
+        <div class="product-pagination-container">
+            @if ($products->onFirstPage())
+                <div class="product-pagination-button-inactive">
+                    &lt;
+                </div>
+            @else
+                <a href="{{ $products->appends(request()->query())->previousPageUrl() }}"
+                   class="product-pagination-button-active">
+                    &lt;
+                </a>
+            @endif
+
+            <div class="product-pagination-current-page">
+                {{ $products->currentPage() }}
+            </div>
+
+            @if ($products->hasMorePages())
+                <a href="{{ $products->appends(request()->query())->nextPageUrl() }}"
+                   class="product-pagination-button-active">
+                    &gt;
+                </a>
+            @else
+                <div class="product-pagination-button-inactive">
+                    &gt;
+                </div>
+            @endif
+        </div>
+    @endif
 </div>
 
 @if (session('success'))
