@@ -63,6 +63,12 @@ sudo chmod -R 775 storage bootstrap/cache
 sudo chown -R $USER:www-data storage bootstrap/cache
 ```
 
+### 8. Import products from API
+
+```bash
+docker exec -it assign-app php artisan fetch:products
+```
+
 ---
 
 ## Frontend Setup
